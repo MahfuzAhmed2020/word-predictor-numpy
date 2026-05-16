@@ -1,0 +1,9 @@
+services:
+  word-model:
+    build: .
+    container_name: numpy-word-predictor
+    volumes:
+      - .:/app
+    stdin_open: true
+    tty: true
+    command: python app/main.py

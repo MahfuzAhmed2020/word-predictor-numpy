@@ -1,0 +1,10 @@
+hey its a beautiful day
+the weather is very good
+machine learning uses data
+docker runs containers
+windows runs software
+python is a programming language
+deep learning uses neural networks
+the dog is happy
+the cat is sad
+life is beautiful
