@@ -18,6 +18,7 @@ def build_vocab(sentences, vocab_size=1000):
     # pad if needed
     while len(words) < vocab_size:
         words.append(f"word_{len(words)}")
+       # words = words[:vocab_size]
 
     words = words[:vocab_size]
 

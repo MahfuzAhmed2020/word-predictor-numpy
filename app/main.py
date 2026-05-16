@@ -8,6 +8,42 @@ def predict(model, context_vec, index_to_word):
     return index_to_word[out.argmax()]
 
 
+# =========================================================
+# GPT-STYLE TEXT GENERATION FUNCTION
+# =========================================================
+def generate_text(model, word_to_index, index_to_word, vocab_size, seed, max_words=30):
+
+    words = seed.lower().split()
+
+    for _ in range(max_words):
+
+        # take last 2 words as context
+        context = words[-2:]
+
+        try:
+            vec = np.concatenate([
+                np.eye(vocab_size)[word_to_index[w]]
+                for w in context
+            ]).reshape(1, -1)
+
+        except KeyError:
+            print("Unknown word in seed:", context)
+            break
+
+        out = model.forward(vec)
+
+        # NEXT WORD (you can replace argmax with randomness later)
+        #next_word = index_to_word[np.argmax(out)]
+        next_word = index_to_word[np.random.choice(len(out.ravel()), p=out.ravel())]
+
+        words.append(next_word)
+
+    return " ".join(words)
+
+
+# =========================================================
+# MAIN PROGRAM
+# =========================================================
 def main():
 
     sentences = load_corpus()
@@ -38,32 +74,31 @@ def main():
 
     print("\nTraining Complete!\n")
 
-    # ================= INTERACTIVE MODE =================
-    print("Now you can type 2 words to predict next word (type 'exit' to stop)\n")
+    # =====================================================
+    # GPT-STYLE MODE (THIS IS THE PART YOU WERE MISSING)
+    # =====================================================
+    print("GPT-style generator ready!\n")
 
     while True:
 
-        text = input("Enter 2 words: ").lower()
+        seed = input("Enter starting words (or 'exit'): ").lower()
 
-        if text == "exit":
+        if seed == "exit":
             break
 
-        words = text.split()
+        print("\nGenerated Text:\n")
 
-        if len(words) != 2:
-            print("Please enter exactly 2 words.")
-            continue
+        result = generate_text(
+            model,
+            word_to_index,
+            index_to_word,
+            len(vocab),
+            seed,
+            max_words=25
+        )
 
-        try:
-            vec = np.concatenate([
-                np.eye(len(vocab))[word_to_index[w]]
-                for w in words
-            ]).reshape(1, -1)
-
-            print("Prediction:", predict(model, vec, index_to_word))
-
-        except KeyError:
-            print("Unknown word in vocabulary.")
+        print(result)
+        print("\n------------------------\n")
 
 
 if __name__ == "__main__":
